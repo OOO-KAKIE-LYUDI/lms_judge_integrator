@@ -13,16 +13,15 @@ FROM golang:1.23-alpine AS migrator
 RUN go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 
 FROM alpine:3.18
-COPY --from=migrator /go/bin/migrate /usr/local/bin/migrate
-
-FROM alpine:3.18
 
 WORKDIR /app
 COPY --from=builder /app/main /app/main
-COPY --from=migrator /usr/local/bin/migrate /usr/local/bin/migrate
 
-COPY migrations /app/migrations
-COPY .env /app/
+COPY --from=migrator /go/bin/migrate /usr/local/bin/migrate
+
+COPY --from=builder /app/migrations /app/migrations
+
+RUN apk add --no-cache ca-certificates tzdata postgresql-client
 
 EXPOSE 8080
 

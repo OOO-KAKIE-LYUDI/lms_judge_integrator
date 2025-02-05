@@ -4,11 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/IBM/sarama"
 	"github.com/joho/godotenv"
 	"lms_judge_integrator/internal/db"
 	"lms_judge_integrator/internal/handler"
+	"lms_judge_integrator/internal/kafka"
 	"lms_judge_integrator/internal/repository"
 	"lms_judge_integrator/internal/service"
+	"lms_judge_integrator/internal/worker"
 	"log"
 	"net/http"
 	"os"
@@ -33,6 +36,13 @@ func main() {
 	}
 	defer dbConnection.Close()
 
+	kafkaConfig := kafka.InitKafka()
+	producer, err := sarama.NewSyncProducer(kafkaConfig.KafkaBrokers(), kafkaConfig.Config())
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer producer.Close()
+
 	repo := repository.NewPostgresRepository(dbConnection)
 
 	judge0URL := os.Getenv(judge0UrlEnvVarName)
@@ -47,12 +57,16 @@ func main() {
 		Handler: mux,
 	}
 
+	checker := worker.NewCheckerWorker(repo, judgeService, producer, 10*time.Second)
+
 	fmt.Printf("Judge-Integrator server started at %s", srv.Addr)
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Fatalf("Server failed: %v", err)
 		}
 	}()
+
+	go checker.Run()
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
@@ -62,4 +76,5 @@ func main() {
 	defer cancel()
 
 	srv.Shutdown(ctx)
+	checker.Stop()
 }
