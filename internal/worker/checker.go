@@ -68,8 +68,8 @@ func (w *CheckerWorker) processSubmissions() {
 				w.repo.UpdateSubmissionResult(ctx, sub.ID, result)
 
 				msg, _ := json.Marshal(map[string]interface{}{
-					"assignmentId":  sub.AssignmentId,
-					"submissionId":  sub.ID,
+					"submissionId":  sub.SubmissionId,
+					"codeJudgeId":   sub.ID,
 					"status":        model.GetCodeJudgeStatusName(model.Done),
 					"result":        statusID,
 					"resultMessage": result["message"],

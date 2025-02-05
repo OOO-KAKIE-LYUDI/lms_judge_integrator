@@ -15,7 +15,7 @@ import (
 const (
 	codeJudgeTableName     = "code_judge"
 	idFieldName            = "id"
-	assignmentIdFieldName  = "assignment_id"
+	submissionIdFieldName  = "submission_id"
 	languageFieldName      = "language"
 	sourceCodeFieldName    = "source_code"
 	testArgumentsFieldName = "test_arguments"
@@ -45,7 +45,7 @@ func (r *PostgresRepository) CreateSubmission(ctx context.Context, submissionDto
 	now := time.Now()
 	query, args, err := r.sb.Insert(codeJudgeTableName).
 		Columns(
-			assignmentIdFieldName,
+			submissionIdFieldName,
 			languageFieldName,
 			sourceCodeFieldName,
 			testArgumentsFieldName,
@@ -54,7 +54,7 @@ func (r *PostgresRepository) CreateSubmission(ctx context.Context, submissionDto
 			createdAtFieldName,
 		).
 		Values(
-			submissionDto.AssignmentId,
+			submissionDto.SubmissionId,
 			submissionDto.Language,
 			submissionDto.SourceCode,
 			submissionDto.TestArguments,
@@ -76,7 +76,7 @@ func (r *PostgresRepository) CreateSubmission(ctx context.Context, submissionDto
 
 	return model.NewCodeJudge(
 		id,
-		submissionDto.AssignmentId,
+		submissionDto.SubmissionId,
 		submissionDto.Language,
 		submissionDto.SourceCode,
 		submissionDto.TestArguments,
@@ -105,7 +105,7 @@ func (r *PostgresRepository) GetPendingSubmissions(ctx context.Context) ([]model
 		var sub model.CodeJudge
 		err := rows.Scan(
 			&sub.ID,
-			&sub.AssignmentId,
+			&sub.SubmissionId,
 			&sub.Language,
 			&sub.SourceCode,
 			&sub.TestArguments,

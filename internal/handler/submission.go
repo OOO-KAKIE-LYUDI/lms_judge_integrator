@@ -22,7 +22,7 @@ func (h *SubmissionHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var req struct {
-		AssignmentId  int    `json:"assignmentId"`
+		SubmissionId  int    `json:"submissionId"`
 		Language      int    `json:"language"`
 		SourceCode    string `json:"sourceCode"`
 		TestArguments string `json:"testArguments"`
@@ -34,7 +34,7 @@ func (h *SubmissionHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	createSubmissionDto := model.NewCreateSubmissionDto(req.AssignmentId, req.Language, req.SourceCode, req.TestArguments, req.TestResults)
+	createSubmissionDto := model.NewCreateSubmissionDto(req.SubmissionId, req.Language, req.SourceCode, req.TestArguments, req.TestResults)
 	if _, err := h.service.CreateSubmission(r.Context(), createSubmissionDto); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

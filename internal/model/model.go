@@ -7,7 +7,7 @@ import (
 
 type CodeJudge struct {
 	ID            string
-	AssignmentId  int
+	SubmissionId  int
 	Language      int
 	SourceCode    string
 	TestArguments string
@@ -20,10 +20,10 @@ type CodeJudge struct {
 	ResultMessage sql.NullString
 }
 
-func NewCodeJudge(ID string, assignmentId int, language int, sourceCode string, testArguments string, testResults string, createdAt time.Time, status string) *CodeJudge {
+func NewCodeJudge(ID string, submissionId int, language int, sourceCode string, testArguments string, testResults string, createdAt time.Time, status string) *CodeJudge {
 	return &CodeJudge{
 		ID:            ID,
-		AssignmentId:  assignmentId,
+		SubmissionId:  submissionId,
 		Language:      language,
 		SourceCode:    sourceCode,
 		TestArguments: testArguments,
@@ -148,13 +148,13 @@ func IsCodeJudgeFinished(result InternalCodeJudgeResult) bool {
 }
 
 type CreateSubmissionDto struct {
-	AssignmentId  int
+	SubmissionId  int
 	Language      int
 	SourceCode    string
 	TestArguments string
 	TestResults   string
 }
 
-func NewCreateSubmissionDto(assignmentId, language int, sourceCode, testArguments, testResults string) *CreateSubmissionDto {
-	return &CreateSubmissionDto{AssignmentId: assignmentId, Language: language, SourceCode: sourceCode, TestArguments: testArguments, TestResults: testResults}
+func NewCreateSubmissionDto(submissionId, language int, sourceCode, testArguments, testResults string) *CreateSubmissionDto {
+	return &CreateSubmissionDto{SubmissionId: submissionId, Language: language, SourceCode: sourceCode, TestArguments: testArguments, TestResults: testResults}
 }
