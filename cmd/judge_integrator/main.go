@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/IBM/sarama"
-	"github.com/joho/godotenv"
 	"lms_judge_integrator/internal/db"
 	"lms_judge_integrator/internal/handler"
 	"lms_judge_integrator/internal/kafka"
@@ -26,9 +25,9 @@ const judge0UrlEnvVarName = "judge.service.url"
 const serverPortEnvKey = "server.port"
 
 func main() {
-	if err := godotenv.Load(); err != nil {
-		log.Fatalf("Failed to load .env file")
-	}
+	//if err := godotenv.Load(); err != nil {
+	//	log.Fatalf("Failed to load .env file")
+	//}
 
 	dbConnection, err := db.InitDB()
 	if err != nil {
